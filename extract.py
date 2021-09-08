@@ -7,8 +7,10 @@ from io import StringIO
 
 import pandas as pd
 import requests
-from dotenv import load_dotenv, main
+from dotenv import load_dotenv
 from google.cloud import storage
+
+from datarobot.utilities import email
 
 load_dotenv()
 
@@ -62,6 +64,9 @@ def main():
         except Exception as xc:
             print(xc)
             print(traceback.format_exc())
+            email_subject = f"SmartRecruiters Export Error - {report_id}"
+            email_body = f"{xc}\n\n{traceback.format_exc()}"
+            email.send_email(subject=email_subject, body=email_body)
             continue
 
         print(f"\t\t{report_file_status}")
@@ -123,11 +128,16 @@ def main():
 
         # upload to GCS
         destination_blob_name = "smartrecruiters/" + "/".join(data_filepath.parts[-2:])
-        
+
         print(f"\tUploading to {destination_blob_name}...")
         blob = gcs_bucket.blob(destination_blob_name)
         blob.upload_from_filename(data_filepath)
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as xc:
+        email_subject = "SmartRecruiters Export Error"
+        email_body = f"{xc}\n\n{traceback.format_exc()}"
+        email.send_email(subject=email_subject, body=email_body)
