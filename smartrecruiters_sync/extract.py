@@ -7,12 +7,9 @@ from io import StringIO
 
 import pandas as pd
 import requests
-from dotenv import load_dotenv
 from google.cloud import storage
 
 from datarobot.utilities import email
-
-load_dotenv()
 
 BASE_URL = "https://api.smartrecruiters.com"
 SMARTTOKEN = os.getenv("SMARTTOKEN")

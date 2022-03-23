@@ -133,4 +133,4 @@ data/
 dev/
 archive/
 .bash_secrets
-*.json
+.pdm.toml
