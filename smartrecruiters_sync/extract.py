@@ -11,14 +11,6 @@ from google.cloud import storage
 
 from datarobot.utilities import email
 
-BASE_URL = "https://api.smartrecruiters.com"
-SMARTTOKEN = os.getenv("SMARTTOKEN")
-GCS_BUCKET_NAME = os.getenv("GCS_BUCKET_NAME")
-REPORT_CONFIG_FILE = os.getenv("REPORT_CONFIG_FILE")
-
-PROJECT_PATH = pathlib.Path(__file__).absolute().parent
-REPORT_CONFIG_FILEPATH = PROJECT_PATH / REPORT_CONFIG_FILE
-
 
 def get_all_data(session, url):
     next_page = None
@@ -34,20 +26,23 @@ def get_all_data(session, url):
 
 
 def main():
+    base_url = "https://api.smartrecruiters.com"
+    script_dir = pathlib.Path(__file__).absolute().parent
+
     smartrecruiters = requests.Session()
-    smartrecruiters.headers["X-SmartToken"] = SMARTTOKEN
+    smartrecruiters.headers["X-SmartToken"] = os.getenv("SMARTTOKEN")
 
     gcs_storage_client = storage.Client()
-    gcs_bucket = gcs_storage_client.bucket(GCS_BUCKET_NAME)
+    gcs_bucket = gcs_storage_client.bucket(os.getenv("GCS_BUCKET_NAME"))
 
-    with open(REPORT_CONFIG_FILEPATH, "r") as f:
+    with open(os.getenv("REPORT_CONFIG_FILEPATH"), "r") as f:
         report_ids = json.load(f)
 
     for report_id in report_ids:
         # generate ad-hoc run of report
         print(report_id)
         report_endpoint = f"reporting-api/v201804/reports/{report_id}/files"
-        report_url = f"{BASE_URL}/{report_endpoint}"
+        report_url = f"{base_url}/{report_endpoint}"
 
         try:
             print("\tGenerating ad-hoc report run...")
@@ -115,7 +110,7 @@ def main():
 
         # save file
         print("\tSaving file...")
-        data_path = PROJECT_PATH / "data" / report_id
+        data_path = script_dir / "data" / report_id
         if not data_path.exists():
             data_path.mkdir(parents=True)
             print(f"\tCreated {data_path}...")
