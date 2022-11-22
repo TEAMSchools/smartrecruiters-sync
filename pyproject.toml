@@ -7,11 +7,13 @@ authors = [
 ]
 license-expression = "MIT"
 dependencies = [
-  "pandas>=1.4.1",
-  "requests>=2.27.1",
-  "google-cloud-storage>=2.2.1",
+    "pandas>=1.4.1",
+    "requests>=2.27.1",
+    "google-cloud-storage>=2.2.1",
+    "datarobot @ file:///${PROJECT_ROOT}/../datarobot",
 ]
 requires-python = ">=3.9"
+dynamic = ["dependencies"]
 
 [project.urls]
 Homepage = ""
