@@ -30,5 +30,5 @@ build-backend = "pdm.pep517.api"
 
 [tool.pdm.scripts]
 _.env_file = ".env"
-extract = { call = "smartrecruiters_sync.extract:main", site_packages = true }
+extract = { call = "smartrecruiters_sync.extract:main" }
 post_lock = { shell = "pdm export -f requirements -o requirements.txt" }
